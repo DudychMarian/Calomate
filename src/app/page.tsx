@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { useDate } from '@/context/DateContext';
 import { CalorieChart } from '@/components/CalorieChart';
+import { MacrosBars } from '@/components/MacrosBars';
 
 export default function Home() {
   const { currentDate } = useDate();
@@ -11,6 +12,12 @@ export default function Home() {
     limit: 2000,
     current: 1000
   } // TODO: get from API
+
+  const macros = {
+    protein: 100,
+    fat: 100,
+    carbs: 100
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -25,6 +32,7 @@ export default function Home() {
         <div className="md:w-1/2 space-y-8">
               <div className="border rounded-lg p-6 space-y-8">
                 <CalorieChart limit={calories.limit} current={calories.current} />
+                <MacrosBars {...macros} />
               </div>
             </div>
             <div className="md:w-1/2">
