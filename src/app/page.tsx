@@ -2,8 +2,10 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { useDate } from '@/context/DateContext';
+
 import { CalorieChart } from '@/components/CalorieChart';
 import { MacrosBars } from '@/components/MacrosBars';
+import { ConsumptionTable } from '@/components/ConsumptionTable';
 
 export default function Home() {
   const { currentDate } = useDate();
@@ -34,8 +36,10 @@ export default function Home() {
                 <CalorieChart limit={calories.limit} current={calories.current} />
                 <MacrosBars {...macros} />
               </div>
+              <ConsumptionTable calories={calories} macros={macros} />
             </div>
             <div className="md:w-1/2">
+              {/* <MealList date={dateObject} onUpdate={handleMealUpdate} onAddFood={handleAddFood} /> */}
             </div>
       </motion.div>
     </AnimatePresence>
