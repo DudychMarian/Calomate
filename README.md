@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Calomate
 
-First, run the development server:
+**Calomate** is a comprehensive web application designed to help you track your calories, monitor your nutrition, calculate your BMI and BMR, and track your weight. It's your personalized guide to informed nutritional choices, providing intuitive insights to support a balanced and energized lifestyle.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* **Calorie Tracker**: Easily log and monitor your daily calorie intake.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* **Nutrition Breakdown**: Get detailed insights into macronutrient and micronutrient intake.
 
-## Learn More
+* **BMI Calculator**: Calculate your Body Mass Index (BMI) based on your height and weight.
 
-To learn more about Next.js, take a look at the following resources:
+* **BMR Calculator**: Determine your Basal Metabolic Rate (BMR) to understand how many calories you burn at rest.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* **Weight Tracker**: Log your weight over time and visualize progress with charts.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+* **Personalised Recommendations**: Receive tailored guidance based on your goals—whether it's weight loss, maintenance, or muscle gain.
 
-## Deploy on Vercel
+## Contribution
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Feel free to open issues and submit pull requests. Contributions are welcome!
