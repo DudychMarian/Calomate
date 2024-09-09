@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Rubik } from 'next/font/google'
 
 import { Navbar } from '@/components/Navbar';
+import { DateProvider } from '@/context/DateContext';
 
 import "./globals.css";
 
@@ -22,13 +23,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${font.className} min-h-screen bg-background`}>
-        <Navbar />
-        <main className="container mx-auto p-4 space-y-8">
-          {children}
-        </main>
-      </body>
-    </html>
+    <DateProvider>
+      <html lang="en">
+        <body className={`${font.className} min-h-screen bg-background`}>
+          <Navbar />
+          <main className="container mx-auto p-4 space-y-8">
+            {children}
+          </main>
+        </body>
+      </html>
+    </DateProvider>
   );
 }

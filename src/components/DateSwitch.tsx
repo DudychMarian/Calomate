@@ -10,28 +10,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-
-export type CalendarDay = [year: number, month: number, day: number]
-
-const dateToCalendarDay = (date: Date): CalendarDay => [
-  date.getFullYear(),
-  date.getMonth() + 1,
-  date.getDate()
-]
-
-const calendarDayToDate = ([year, month, day]: CalendarDay): Date =>
-  new Date(year, month - 1, day)
+import { CalendarDay, calendarDayToDate, dateToCalendarDay } from '@/lib/calendar'
+import { useDate } from '@/context/DateContext'
 
 export default function DateSwitch() {
-  const [currentDate, setCurrentDate] = useState<CalendarDay>(dateToCalendarDay(new Date()))
+  const { currentDate, setCurrentDate } = useDate();
+
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   const goToPreviousDay = useCallback(() => {
-    setCurrentDate((prevDate) => dateToCalendarDay(subDays(calendarDayToDate(prevDate), 1)))
+    setCurrentDate((prevDate: CalendarDay) => dateToCalendarDay(subDays(calendarDayToDate(prevDate), 1)))
   }, [])
 
   const goToNextDay = useCallback(() => {
-    setCurrentDate((prevDate) => dateToCalendarDay(addDays(calendarDayToDate(prevDate), 1)))
+    setCurrentDate((prevDate: CalendarDay) => dateToCalendarDay(addDays(calendarDayToDate(prevDate), 1)))
   }, [])
 
   const dateObject = calendarDayToDate(currentDate)
