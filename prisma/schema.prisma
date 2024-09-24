@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String            @id
+  email             String            @unique
+  name              String?
+  sex               Sex
+  activityLevel     ActivityLevel
+  mainGoal          MainGoal
+  birthday          DateTime
+  countedCalories   Boolean           @default(false)
+  currentWeight     Int
+  goalWeight        Int
+  diet              Diet
+  height            Int
+  measurementSystem MeasurementSystem
+  theme             Theme?            @default(System)
+  consumedFoods     ConsumedFood[]
+}
+
+model ConsumedFood {
+  id        String     @id @default(uuid())
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String // Foreign key to User
+  date      DateTime // The date when the food was consumed
+  foodItems FoodItem[] @relation("ConsumedFoodItems") // All food items linked to this consumed food
+
+  @@unique([userId, date])
+}
+
+model FoodItem {
+  id             String        @id @default(uuid())
+  name           String
+  image          String
+  calories       Int
+  protein        Float
+  fat            Float
+  carbs          Float
+  consumedFoodId String? // Foreign key to ConsumedFood
+  consumedFood   ConsumedFood? @relation("ConsumedFoodItems", fields: [consumedFoodId], references: [id]) // Relation to ConsumedFood
+  category       Int // Add a field to identify the category (0, 1, 2, 3)
+}
+
+model Recipe {
+  id          String       @id @default(cuid())
+  title       String
+  description String
+  image       String?
+  ingredients String[]
+  steps       String[]
+  status      RecipeStatus @default(Draft)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum RecipeStatus {
+  Draft
+  Published
+}
+
+enum MeasurementSystem {
+  Metric
+  Imperial
+}
+
+enum Diet {
+  Classic
+  Pescatarian
+  Vegetarian
+  Vegan
+}
+
+enum ActivityLevel {
+  LightActive      @map("Light active")
+  ModeratelyActive @map("Moderately active")
+  Active
+  VeryActive       @map("Very active")
+}
+
+enum MainGoal {
+  LoseWeight     @map("Lose weight")
+  MaintainWeight @map("Maintain weight")
+  GainWeight     @map("Gain weight")
+  BuildMuscle    @map("Build muscle")
+  SomethingElse  @map("Something else")
+}
+
+enum Sex {
+  Male
+  Female
+}
+
+enum Theme {
+  Dark
+  Light
+  System
+}

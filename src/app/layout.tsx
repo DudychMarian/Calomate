@@ -1,8 +1,12 @@
-import type { Metadata } from "next";
 import { Rubik } from 'next/font/google'
+import type { Metadata } from "next";
+import { ClerkProvider } from '@clerk/nextjs'
 
-import { Navbar } from '@/components/Navbar';
 import { DateProvider } from '@/context/DateContext';
+import { UserProvider } from '@/context/UserContext';
+
+import { Toaster } from "@/components/ui/sonner"
+import { Navbar } from '@/components/Navbar';
 
 import "./globals.css";
 
@@ -23,15 +27,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <DateProvider>
-      <html lang="en">
-        <body className={`${font.className} min-h-screen bg-background`}>
-          <Navbar />
-          <main className="container mx-auto p-4 space-y-8">
-            {children}
-          </main>
-        </body>
-      </html>
-    </DateProvider>
+    <ClerkProvider>
+      <UserProvider>
+        <DateProvider>
+          <html lang="en">
+            <body className={`${font.className} min-h-screen bg-background`}>
+              <Navbar />
+              <main className="container mx-auto p-4 space-y-8">
+                {children}
+              </main>
+              <Toaster />
+            </body>
+          </html>
+        </DateProvider>
+      </UserProvider>
+    </ClerkProvider>
   );
 }

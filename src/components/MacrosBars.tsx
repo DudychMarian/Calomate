@@ -1,13 +1,22 @@
 import { motion } from "framer-motion"
 
-export type MacrosBarsProps = { protein: number, fat: number, carbs: number }
+export type MainMacrosBarsProps = {
+  protein: number,
+  fat: number,
+  carbs: number,
+}
+export interface MacrosBarsProps extends MainMacrosBarsProps {
+  target: {
+    protein: number, fat: number, carbs: number
+  }
+}
 export type MacroBarProps = { label: string, value: number, color: string, target: number }
 
-export function MacrosBars({ protein, fat, carbs }: MacrosBarsProps) {
+export function MacrosBars({ protein, fat, carbs, target }: MacrosBarsProps) {
   const macros = [
-    { label: "Protein", value: protein, color: "bg-blue-500", target: 150 },
-    { label: "Fat", value: fat, color: "bg-yellow-500", target: 67 },
-    { label: "Carbs", value: carbs, color: "bg-green-500", target: 250 },
+    { label: "Protein", value: protein, color: "bg-blue-500", target: target.protein },
+    { label: "Fat", value: fat, color: "bg-yellow-500", target: target.fat },
+    { label: "Carbs", value: carbs, color: "bg-green-500", target: target.carbs },
   ]
 
   return (

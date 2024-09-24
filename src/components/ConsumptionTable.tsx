@@ -16,16 +16,12 @@ type ConsumptionTableProps = {
 }
 
 export function ConsumptionTable({ calories, macros }: ConsumptionTableProps) {
-  const macrosGoal = {
-    protein: 150,
-    fat: 67,
-    carbs: 200,
-  }// TODO - to be calculated based on user's goals
+
 
   const caloriesLeft = calories.limit - calories.current;
-  const proteinLeft = macrosGoal.protein - macros.protein
-  const fatLeft = macrosGoal.fat - macros.fat
-  const carbsLeft = macrosGoal.carbs - macros.carbs
+  const proteinLeft = macros.target.protein - macros.protein
+  const fatLeft = macros.target.fat - macros.fat
+  const carbsLeft = macros.target.carbs - macros.carbs
 
   return (
     <div className="border rounded-lg p-4">
@@ -45,9 +41,9 @@ export function ConsumptionTable({ calories, macros }: ConsumptionTableProps) {
             <TableCell></TableCell>
             <TableCell>Goal</TableCell>
             <TableCell>{calories.limit}</TableCell>
-            <TableCell>{macrosGoal.protein}</TableCell>
-            <TableCell>{macrosGoal.fat}</TableCell>
-            <TableCell>{macrosGoal.carbs}</TableCell>
+            <TableCell>{macros.target.protein}</TableCell>
+            <TableCell>{macros.target.fat}</TableCell>
+            <TableCell>{macros.target.carbs}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className='font-bold'>-</TableCell>
