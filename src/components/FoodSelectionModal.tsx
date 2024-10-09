@@ -34,6 +34,7 @@ import {
 import { FoodItem } from '@/types/food'
 import { searchFoods } from '@/app/api/food/food'
 import { calculateNutritionForServing, getAdditiveColor, getEcoScoreColor, getNovaGroupColor, getNutritionGradeColor, parseServingSize } from '@/lib/nutritionUtils'
+import { BarcodeScanner } from './BarcodeScanner'
 
 type FoodSelectionModalProps = {
   isOpen: boolean
@@ -53,6 +54,7 @@ export function FoodSelectionModal({ isOpen, onClose, onSelectFood }: FoodSelect
   const [editedNutrition, setEditedNutrition] = useState<Partial<FoodItem>>({})
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [showBarcodeScanner, setShowBarcodeScanner] = useState(false)
 
   const fetchFoodData = async () => {
     if (searchTerm.trim() === '') {
@@ -117,6 +119,22 @@ export function FoodSelectionModal({ isOpen, onClose, onSelectFood }: FoodSelect
     }
   }
 
+  const handleBarcodeScan = () => {
+    setShowBarcodeScanner(true)
+  }
+
+  const handleBarcodeClose = () => {
+    setShowBarcodeScanner(false)
+  }
+
+  const handleFoodFound = (food: FoodItem) => {
+    setSelectedFood(food)
+    setServingSize(parseServingSize(food.serving_size))
+    setEditedNutrition({})
+    setEditMode(false)
+    setShowBarcodeScanner(false)
+  }
+
   const renderFoodSelection = () => (
     <div className="grid gap-4 py-4">
       <div className="flex items-center gap-2">
@@ -131,7 +149,7 @@ export function FoodSelectionModal({ isOpen, onClose, onSelectFood }: FoodSelect
           />
         </div>
         <Button onClick={handleSearch}>Search</Button>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" onClick={handleBarcodeScan}>
           <Barcode className="h-4 w-4" />
         </Button>
       </div>
@@ -383,7 +401,13 @@ export function FoodSelectionModal({ isOpen, onClose, onSelectFood }: FoodSelect
         <DialogHeader>
           <DialogTitle>{selectedFood ? 'Food Details' : 'Add Food'}</DialogTitle>
         </DialogHeader>
-        {selectedFood ? renderFoodDetail() : renderFoodSelection()}
+        {showBarcodeScanner ? (
+          <BarcodeScanner onClose={handleBarcodeClose} onFoodFound={handleFoodFound} />
+        ) : selectedFood ? (
+          renderFoodDetail()
+        ) : (
+          renderFoodSelection()
+        )}
       </DialogContent>
     </Dialog>
   )
