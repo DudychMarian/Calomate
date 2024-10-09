@@ -88,7 +88,7 @@ export default function Home() {
     setIsFoodModalOpen(true);
   };
 
-  const addFoodToDatabase = async ({ foodData, currentMealIndex }: { foodData: any[], currentMealIndex: number }) => {
+  const addFoodToDatabase = async ({ foodData, currentMealIndex, servingSize }: { foodData: any[], currentMealIndex: number, servingSize: number }) => {
     if (!user) {
       console.error("User not authenticated");
       return;
@@ -104,8 +104,13 @@ export default function Home() {
           userId: user.id,
           date: new Date(currentDate.join("-")),
           foodItems: foodData.map(item => ({
-            ...item,
-            category: currentMealIndex, // Assign the category based on currentMealIndex
+            name: item.name,
+            image: item.image,
+            calories: (item.energy_100g * servingSize) / 100,
+            protein: (item.protein_100g * servingSize) / 100,
+            fat: (item.fat_100g * servingSize) / 100,
+            carbs: (item.carbs_100g * servingSize) / 100,
+            category: currentMealIndex,
           })),
         }),
       });
@@ -155,9 +160,9 @@ export default function Home() {
       <FoodSelectionModal
         isOpen={isFoodModalOpen}
         onClose={() => setIsFoodModalOpen(false)}
-        onSelectFood={(food) => {
+        onSelectFood={(food, servingSize) => {
           console.log("Adding food to meal", currentMealIndex, food);
-          addFoodToDatabase({ foodData: [food], currentMealIndex });
+          addFoodToDatabase({ foodData: [food], currentMealIndex, servingSize });
           setIsFoodModalOpen(false);
         }}
       />
