@@ -49,6 +49,7 @@ export default function DateSwitch() {
         size="icon"
         onClick={goToPreviousDay}
         aria-label="Previous day"
+        className='transition-colors duration-200 hover:bg-green-700 hover:text-white border-green-700'
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
@@ -56,7 +57,7 @@ export default function DateSwitch() {
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="min-w-[150px] justify-center text-left font-normal"
+            className="min-w-[150px] justify-center text-left font-normal transition-colors duration-200 hover:bg-green-700 hover:text-white border-green-700"
           >
             <span className="text-lg font-semibold">
               {getDateLabel(dateObject)}
@@ -77,6 +78,7 @@ export default function DateSwitch() {
         size="icon"
         onClick={goToNextDay}
         aria-label="Next day"
+        className='transition-colors duration-200 hover:bg-green-700 hover:text-white border-green-700'
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

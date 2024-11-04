@@ -28,7 +28,7 @@ export default function WaterTracker({ showTitle, showProgress, showGlassCount }
 
     if (newWaterIntake >= DAILY_GOAL && waterIntake < DAILY_GOAL) {
       toast("Daily Goal Achieved!", {
-        description: "Congratulations! You've reached your daily water intake goal.",
+        description: "Congratulations! You've reached your daily water intake goal. 🎉",
       })
     }
 
@@ -44,7 +44,7 @@ export default function WaterTracker({ showTitle, showProgress, showGlassCount }
   }
 
   return (
-    <div className="border rounded-lg p-4">
+    <div className="border rounded-lg p-4 bg-white border-[#F4F5F6]">
       {showTitle && <h2 className="text-2xl font-bold mb-4">Water Intake Tracker</h2>}
       {showProgress && <div className="mb-6">
         <Progress value={(waterIntake / DAILY_GOAL) * 100} className="h-4" />

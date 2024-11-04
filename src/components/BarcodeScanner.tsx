@@ -24,14 +24,24 @@ export function BarcodeScanner({ onClose, onFoodFound }: BarcodeScannerProps) {
       try {
         setScanning(true);
         const videoInputDevices = await codeReaderRef.current.listVideoInputDevices();
-        selectedDeviceId = videoInputDevices[0].deviceId;
+
+        // Find the back camera
+        const backCamera = videoInputDevices.find(device =>
+          /(back|rear)/i.test(device.label)
+        );
+
+        selectedDeviceId = backCamera ? backCamera.deviceId : videoInputDevices[0].deviceId;
 
         if (videoRef.current) {
-          codeReaderRef.current.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
-            if (result) {
-              handleBarcodeDetected(result.getText());
+          await codeReaderRef.current.decodeFromVideoDevice(
+            selectedDeviceId,
+            videoRef.current,
+            (result) => {
+              if (result) {
+                handleBarcodeDetected(result.getText());
+              }
             }
-          });
+          );
         }
       } catch (err) {
         console.error('Error accessing camera:', err);

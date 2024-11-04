@@ -1,171 +1,181 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from "framer-motion";
-import { Coffee, Cookie, Loader2, Soup, UtensilsCrossed } from 'lucide-react';
+import { motion } from 'framer-motion'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Apple, Barcode, Droplet, Utensils, Scale, Database, Clock, Dumbbell } from 'lucide-react'
+import Link from 'next/link'
 
-import { useDate } from '@/context/DateContext';
-import { useUser } from '@/context/UserContext';
-
-import { CalorieChart } from '@/components/CalorieChart';
-import { MacrosBars } from '@/components/MacrosBars';
-import { ConsumptionTable } from '@/components/ConsumptionTable';
-import { MealList } from '@/components/MealList';
-import { FoodSelectionModal } from '@/components/FoodSelectionModal';
-import WaterTracker from '@/components/WaterTracker';
-import { calendarDayToDate } from '@/lib/calendar';
-
-const MEAL_TYPES = [
-  { id: 0, name: 'Breakfast', icon: Coffee },
-  { id: 1, name: 'Lunch', icon: UtensilsCrossed },
-  { id: 2, name: 'Dinner', icon: Soup },
-  { id: 3, name: 'Snack', icon: Cookie },
-];
-export default function Home() {
-  const [calories, setCalories] = useState<{ limit: number; current: number } | null>(null);
-  const [targetMacros, setTargetMacros] = useState<{ protein: number; fat: number; carbs: number } | null>(null);
-  const [macros, setMacros] = useState<{ protein: number; fat: number; carbs: number } | null>(null);
-  const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
-  const [currentMealIndex, setCurrentMealIndex] = useState(0);
-  const [meals, setMeals] = useState(MEAL_TYPES.map(type => ({ ...type, items: [] })));
-
-  const { currentDate } = useDate();
-  const { user } = useUser();
-
-  const dateObject = calendarDayToDate(currentDate);
-
-  const fetchMeals = async () => {
-    if (user && dateObject) {
-      try {
-        const response = await fetch(`/api/consumedFood?userId=${user.id}&date=${dateObject.toISOString()}`);
-        const data = await response.json();
-
-        if (data.success) {
-          if (data.consumedFood) {
-            const updatedMeals = MEAL_TYPES.map(mealType => {
-              const category = data.consumedFood.foodItems.filter((item: any) => item.category === mealType.id);
-              return {
-                ...mealType,
-                items: category,
-              };
-            });
-            setMeals(updatedMeals);
-          } else {
-            setMeals(MEAL_TYPES.map(type => ({ ...type, items: [] })));
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching meals:', error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchMeals()
-  }, [user, currentDate]);
-
-  useEffect(() => {
-    if (user && user.nutritions) {
-      const { calorieNeeds, macrosDistribution } = user.nutritions;
-
-      setCalories({ limit: calorieNeeds, current: 0 });
-      setTargetMacros({
-        protein: macrosDistribution.protein,
-        fat: macrosDistribution.fat,
-        carbs: macrosDistribution.carbs,
-      });
-      setMacros({ protein: 0, fat: 0, carbs: 0 });
-    }
-  }, [user]);
-
-  const handleMealUpdate = (newCalories: number, newMacros: typeof macros) => {
-    setCalories((prev) => prev ? { ...prev, current: newCalories } : null);
-    setMacros(newMacros);
-  };
-
-  const handleAddFood = (mealIndex: number) => {
-    setCurrentMealIndex(mealIndex);
-    setIsFoodModalOpen(true);
-  };
-
-  const addFoodToDatabase = async ({ foodData, currentMealIndex, servingSize }: { foodData: any[], currentMealIndex: number, servingSize: number }) => {
-    if (!user) {
-      console.error("User not authenticated");
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/consumedFood', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          date: new Date(currentDate.join("-")),
-          foodItems: foodData.map(item => ({
-            name: item.name,
-            image: item.image,
-            calories: (item.energy_100g * servingSize) / 100,
-            protein: (item.protein_100g * servingSize) / 100,
-            fat: (item.fat_100g * servingSize) / 100,
-            carbs: (item.carbs_100g * servingSize) / 100,
-            category: currentMealIndex,
-          })),
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!result.success) {
-        console.error("Failed to add food", result.message);
-      } else {
-        console.log("Food added successfully", result.consumedFood);
-        // Optionally, refresh the data or trigger updates
-        fetchMeals();
-      }
-    } catch (error) {
-      console.error("Error adding food to database", error);
-    }
-  };
-
-  if (!calories || !macros || !targetMacros) {
-    return <Loader2 className="h-6 w-6 animate-spin" />
-  }
+export default function LandingPage() {
+  const features = [
+    {
+      id: "track",
+      title: "Track Your Progress",
+      items: [
+        { icon: Utensils, color: "text-green-600", title: "Calorie Intake", description: "Monitor your daily calorie consumption" },
+        { icon: Droplet, color: "text-blue-600", title: "Water Intake", description: "Stay hydrated with water tracking" },
+        { icon: Scale, color: "text-purple-600", title: "Body Metrics", description: "Track weight, BMI, BMR, and more" },
+        { icon: Clock, color: "text-orange-600", title: "Fasting Tracker", description: "Monitor your fasting periods" },
+      ]
+    },
+    {
+      id: "analyze",
+      title: "Analyze Your Data",
+      items: [
+        { icon: Dumbbell, color: "text-red-600", title: "Macro Breakdown", description: "Visualize your protein, fat, and carb intake" },
+        { icon: Scale, color: "text-indigo-600", title: "Body Composition", description: "Analyze muscle mass, body water, and more" },
+      ]
+    },
+    {
+      id: "customize",
+      title: "Customize Your Experience",
+      items: [
+        { icon: Utensils, color: "text-yellow-600", title: "Create Recipes", description: "Store and track your favorite meals" },
+        { icon: Clock, color: "text-teal-600", title: "Custom Fasting Plans", description: "Design your own fasting schedules" },
+      ]
+    },
+    {
+      id: "discover",
+      title: "Discover New Foods",
+      items: [
+        { icon: Database, color: "text-cyan-600", title: "Extensive Food Database", description: "Access over 3.5 million products worldwide" },
+        { icon: Barcode, color: "text-pink-600", title: "Barcode Scanner", description: "Quickly add foods with our scanner" },
+      ]
+    },
+  ]
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentDate.join("-")}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="flex flex-col md:flex-row gap-8"
-        >
-          <div className="md:w-1/2 space-y-8">
-            <div className="border rounded-lg p-6 space-y-8">
-              <CalorieChart limit={calories.limit} current={calories.current} />
-              <MacrosBars target={targetMacros} {...macros} />
-            </div>
-            <ConsumptionTable calories={calories} macros={{ ...macros, target: targetMacros }} />
-            <WaterTracker showTitle={true} showProgress={true} showGlassCount={true} />
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-blue-50">
+      <header className="container mx-auto px-4 py-6 flex justify-between items-center">
+        <Link href="/" className="flex items-center space-x-2">
+          <Apple className="h-8 w-8 text-green-600" />
+          <span className="text-2xl font-bold text-green-600">Calomate</span>
+        </Link>
+        <nav>
+          <Link href="/sign-in">
+            <Button variant="ghost">Login</Button>
+          </Link>
+          <Link href="/sign-up">
+            <Button>Sign Up</Button>
+          </Link>
+        </nav>
+      </header>
+
+      <main>
+        <section className="container mx-auto px-4 py-20 text-center">
+          <motion.h1
+            className="text-5xl font-bold mb-6 text-gray-800"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            Your Personal Nutrition Guide
+          </motion.h1>
+          <motion.p
+            className="text-xl mb-8 text-gray-600 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            CaloMate: Make informed choices, gain intuitive insights, and live a vibrant life. Join us on the path to a balanced, energized you!
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Link href="/dashboard">
+              <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white">
+                Get Started - It's Free!
+              </Button>
+            </Link>
+          </motion.div>
+        </section>
+
+        <section className="container mx-auto px-4 py-20">
+          <h2 className="text-3xl font-bold mb-12 text-center text-gray-800">Powerful Features for Your Health Journey</h2>
+          {features.map((feature) => (
+            <Card key={feature.id} className="mb-8 bg-transparent">
+              <CardHeader>
+                <CardTitle>{feature.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                {feature.items.map((item, index) => (
+                  <div key={index} className="flex items-center space-x-4">
+                    <item.icon className={`h-10 w-10 ${item.color}`} />
+                    <div>
+                      <h3 className="font-semibold">{item.title}</h3>
+                      <p className="text-sm text-gray-600">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+
+        <section className="container mx-auto px-4 py-20">
+          <h2 className="text-3xl font-bold mb-12 text-center text-gray-800">Frequently Asked Questions</h2>
+          <Accordion type="single" collapsible className="w-full max-w-3xl mx-auto">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>Is Calomate really free?</AccordionTrigger>
+              <AccordionContent>
+                Yes, Calomate is completely free to use. We believe that everyone should have access to tools that help them lead healthier lives.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>How accurate is the food database?</AccordionTrigger>
+              <AccordionContent>
+                Our food database contains over 3.5 million products worldwide and is regularly updated. While we strive for accuracy, we always recommend double-checking the information with the product packaging.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>Can I sync Calomate with other fitness apps?</AccordionTrigger>
+              <AccordionContent>
+                Currently, Calomate operates as a standalone app. However, we're working on integrations with popular fitness trackers and apps. Stay tuned for updates!
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-4">
+              <AccordionTrigger>How does the fasting tracker work?</AccordionTrigger>
+              <AccordionContent>
+                Our fasting tracker allows you to select from a variety of preset fasting schedules or create your own custom plan. You can easily log your fasting periods and track your progress over time.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-5">
+              <AccordionTrigger>Is my data safe with Calomate?</AccordionTrigger>
+              <AccordionContent>
+                We take data privacy very seriously. All your personal information and health data is encrypted and securely stored. We never share your data with third parties without your explicit consent.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </section>
+
+        <section className="container mx-auto px-4 py-20 text-center">
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">Join Calomate Today</h2>
+          <p className="text-xl mb-8 text-gray-600 max-w-2xl mx-auto">
+            Start your journey to a healthier you with Calomate. It's completely free!
+          </p>
+          <div className="flex justify-center space-x-4">
+            <Input className="max-w-xs bg-white" placeholder="Enter your email" type="email" />
+            <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white">
+              Get Started
+            </Button>
           </div>
-          <div className="md:w-1/2">
-            {<MealList onUpdate={handleMealUpdate} onAddFood={handleAddFood} meals={meals} setMeals={setMeals} />}
-          </div>
-        </motion.div>
-      </AnimatePresence>
-      <FoodSelectionModal
-        isOpen={isFoodModalOpen}
-        onClose={() => setIsFoodModalOpen(false)}
-        onSelectFood={(food, servingSize) => {
-          console.log("Adding food to meal", currentMealIndex, food);
-          addFoodToDatabase({ foodData: [food], currentMealIndex, servingSize });
-          setIsFoodModalOpen(false);
-        }}
-      />
-    </>
-  );
+        </section>
+      </main>
+
+      <footer className="py-8">
+        <div className="container mx-auto px-4 text-center text-gray-600">
+          <p>&copy; 2025 Calomate. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  )
 }

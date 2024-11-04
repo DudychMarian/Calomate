@@ -46,7 +46,7 @@ function MacroBar({ label, value, color, target }: MacroBarProps) {
         />
       </div>
       <div className={`flex justify-center text-sm font-medium ${value > target && "text-red-600"}`}>
-        <span>{value} / {target}g</span>
+        <span>{value.toFixed(0)} / {target}g</span>
       </div>
     </div>
   )

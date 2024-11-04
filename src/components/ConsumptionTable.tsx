@@ -24,7 +24,7 @@ export function ConsumptionTable({ calories, macros }: ConsumptionTableProps) {
   const carbsLeft = macros.target.carbs - macros.carbs
 
   return (
-    <div className="border rounded-lg p-4">
+    <div className="border rounded-lg p-4 bg-white border-[#F4F5F6]">
       <Table>
         <TableHeader>
           <TableRow>
@@ -48,10 +48,10 @@ export function ConsumptionTable({ calories, macros }: ConsumptionTableProps) {
           <TableRow>
             <TableCell className='font-bold'>-</TableCell>
             <TableCell>FOOD</TableCell>
-            <TableCell>{calories.current}</TableCell>
-            <TableCell>{macros.protein}</TableCell>
-            <TableCell>{macros.fat}</TableCell>
-            <TableCell>{macros.carbs}</TableCell>
+            <TableCell>{calories.current.toFixed(0)}</TableCell>
+            <TableCell>{macros.protein.toFixed(0)}</TableCell>
+            <TableCell>{macros.fat.toFixed(0)}</TableCell>
+            <TableCell>{macros.carbs.toFixed(0)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className='font-bold'>+</TableCell>
@@ -64,10 +64,10 @@ export function ConsumptionTable({ calories, macros }: ConsumptionTableProps) {
           <TableRow className="font-bold">
             <TableCell></TableCell>
             <TableCell>LEFT</TableCell>
-            <TableCell className={`${caloriesLeft < 0 && "text-red-600"}`}>{caloriesLeft}</TableCell>
-            <TableCell className={`${proteinLeft < 0 && "text-red-600"}`}>{proteinLeft}</TableCell>
-            <TableCell className={`${fatLeft < 0 && "text-red-600"}`}>{fatLeft}</TableCell>
-            <TableCell className={`${carbsLeft < 0 && "text-red-600"}`}>{carbsLeft}</TableCell>
+            <TableCell className={`${caloriesLeft < 0 && "text-red-600"}`}>{caloriesLeft.toFixed(0)}</TableCell>
+            <TableCell className={`${proteinLeft < 0 && "text-red-600"}`}>{proteinLeft.toFixed(0)}</TableCell>
+            <TableCell className={`${fatLeft < 0 && "text-red-600"}`}>{fatLeft.toFixed(0)}</TableCell>
+            <TableCell className={`${carbsLeft < 0 && "text-red-600"}`}>{carbsLeft.toFixed(0)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
