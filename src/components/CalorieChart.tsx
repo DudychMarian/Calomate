@@ -11,7 +11,7 @@ export function CalorieChart({ limit, current }: CalorieChartProps) {
         <circle
           className="text-muted-foreground"
           strokeWidth="10"
-          stroke="currentColor"
+          stroke="#F0F0F1"
           fill="transparent"
           r="45"
           cx="50"
@@ -20,7 +20,7 @@ export function CalorieChart({ limit, current }: CalorieChartProps) {
         <motion.circle
           className="text-primary"
           strokeWidth="10"
-          stroke="currentColor"
+          stroke="#16A349"
           fill="transparent"
           r="45"
           cx="50"

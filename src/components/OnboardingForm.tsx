@@ -2,25 +2,25 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight, Apple, Scale, Dumbbell, HelpCircle, Smile, Utensils, Brain, Moon, Heart, Check, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, Apple, Scale, Dumbbell, HelpCircle, Smile, Utensils, Brain, Moon, Heart, Check, X, Zap } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
+import { Card, CardContent } from "@/components/ui/card"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const steps = [
-  { title: "What's your main goal?" },
-  { title: "What's your sex?" },
-  { title: "Is there anything else you want to achieve?" },
-  { title: "Have you ever counted calories before?" },
-  { title: "When is your birthday?" },
-  { title: "How tall are you?" },
-  { title: "How active are you?" },
-  { title: "What's your current weight?" },
-  { title: "Let's set your goal you're going to crush!" },
-  { title: "Do you follow a specific diet?" },
+  { title: "What's your main goal?", description: "Let's start by understanding what you want to achieve." },
+  { title: "What's your sex?", description: "This helps us calculate your calorie needs more accurately." },
+  { title: "Have you counted calories before?", description: "This helps us tailor our approach to your experience level." },
+  { title: "When is your birthday?", description: "Your age is a factor in determining your nutritional needs." },
+  { title: "How tall are you?", description: "Height is an important factor in calculating your ideal calorie intake." },
+  { title: "How active are you?", description: "Your activity level affects how many calories you need daily." },
+  { title: "What's your current weight?", description: "This helps us establish your starting point." },
+  { title: "What's your goal weight?", description: "Let's set a target for you to work towards." },
+  { title: "Do you follow a specific diet?", description: "We'll customize our recommendations based on your dietary preferences." },
 ]
 
 function toPascalCase(str: string) {
@@ -49,7 +49,7 @@ export default function OnboardingForm() {
   })
   const router = useRouter()
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
@@ -74,7 +74,7 @@ export default function OnboardingForm() {
         birthday: new Date(formData.birthday).toISOString(),
         activityLevel: toPascalCase(formData.activityLevel),
       };
-  
+
       const response = await fetch('/api/onboarding', {
         method: 'POST',
         headers: {
@@ -82,12 +82,12 @@ export default function OnboardingForm() {
         },
         body: JSON.stringify(formattedFormData),
       });
-  
+
       const result = await response.json();
-  
+
       if (result.success) {
         console.log("Form data successfully saved:", result.user);
-        router.push("/");
+        router.push("/dashboard");
       } else {
         console.error("Error saving form data:", result.error);
       }
@@ -100,297 +100,300 @@ export default function OnboardingForm() {
     switch (currentStep) {
       case 0:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <div className="grid grid-cols-1 gap-4">
-              {[
-                { icon: Apple, text: "Lose weight" },
-                { icon: Scale, text: "Maintain weight" },
-                { icon: ChevronRight, text: "Gain weight" },
-                { icon: Dumbbell, text: "Build muscle" },
-                { icon: HelpCircle, text: "Something else" },
-              ].map((item) => (
-                <Button
-                  key={item.text}
-                  variant="outline"
-                  className={`flex items-center justify-start space-x-2 h-16 ${
-                    formData.mainGoal === item.text ? "border-primary" : ""
-                  }`}
-                  onClick={() => {
-                    setFormData((prev) => ({ ...prev, mainGoal: item.text }))
-                    handleNext()
-                  }}
-                >
-                  <item.icon className="h-6 w-6" />
-                  <span>{item.text}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+              <p className="text-muted-foreground mb-6">{steps[currentStep].description}</p>
+              <div className="grid grid-cols-1 gap-4">
+                {[
+                  { icon: Apple, text: "Lose weight", description: "Shed those extra pounds and feel great" },
+                  { icon: Scale, text: "Maintain weight", description: "Keep your current weight and improve health" },
+                  { icon: ChevronRight, text: "Gain weight", description: "Add healthy weight to your frame" },
+                  { icon: Dumbbell, text: "Build muscle", description: "Increase strength and muscle mass" },
+                  { icon: HelpCircle, text: "Something else", description: "Tell us more about your specific goal" },
+                ].map((item) => (
+                  <TooltipProvider key={item.text}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={`flex items-center justify-start space-x-4 h-16 ${formData.mainGoal === item.text ? "border-green-600 bg-green-50" : ""
+                            }`}
+                          onClick={() => {
+                            setFormData((prev) => ({ ...prev, mainGoal: item.text }))
+                            handleNext()
+                          }}
+                        >
+                          <item.icon className="h-8 w-8 text-green-600" />
+                          <span className="font-semibold">{item.text}</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <p>{item.description}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )
       case 1:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <p className="text-muted-foreground">
-              Since the formula for an accurate calorie calculation differs based on sex, we need this information to calculate your daily calorie goal.
-            </p>
-            <div className="flex space-x-4">
-              {[
-                { icon: Smile, text: "Male" },
-                { icon: Smile, text: "Female" },
-              ].map((item) => (
-                <Button
-                  key={item.text}
-                  variant="outline"
-                  className={`flex-1 h-16 ${
-                    formData.sex === item.text ? "border-primary" : ""
-                  }`}
-                  onClick={() => {
-                    setFormData((prev) => ({ ...prev, sex: item.text }))
-                    handleNext()
-                  }}
-                >
-                  <item.icon className="h-6 w-6 mr-2" />
-                  {item.text}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+              <p className="text-muted-foreground mb-6">{steps[currentStep].description}</p>
+              <div className="flex space-x-4">
+                {[
+                  { icon: Smile, text: "Male" },
+                  { icon: Smile, text: "Female" },
+                ].map((item) => (
+                  <Button
+                    key={item.text}
+                    variant="outline"
+                    className={`flex-1 h-20 ${formData.sex === item.text ? "border-green-600 bg-green-50" : ""
+                      }`}
+                    onClick={() => {
+                      setFormData((prev) => ({ ...prev, sex: item.text }))
+                      handleNext()
+                    }}
+                  >
+                    <item.icon className="h-8 w-8 mr-2 text-green-600" />
+                    <span className="font-semibold">{item.text}</span>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )
       case 2:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <div className="space-y-2">
-              {[
-                { icon: Utensils, text: "Improve my relationship with food" },
-                { icon: Utensils, text: "Learn how to cook healthily" },
-                { icon: Brain, text: "Strengthen my immune system" },
-                { icon: Moon, text: "Sleep better and have more energy" },
-                { icon: Heart, text: "Feel comfortable in my own skin" },
-                { icon: X, text: "None of the above" },
-              ].map((item) => (
-                <div key={item.text} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={item.text}
-                    // @ts-ignore
-                    checked={formData.additionalGoals.includes(item.text)}
-                    onCheckedChange={(checked) => {
-                      setFormData((prev: any) => ({
-                        ...prev,
-                        additionalGoals: checked
-                          ? [...prev.additionalGoals, item.text]
-                          : prev.additionalGoals.filter((goal: any) => goal !== item.text),
-                      }))
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+              <p className="text-muted-foreground mb-6">{steps[currentStep].description}</p>
+              <div className="flex space-x-4">
+                {["Yes", "No"].map((option) => (
+                  <Button
+                    key={option}
+                    variant="outline"
+                    className={`flex-1 h-20 ${formData.countedCalories === option ? "border-green-600 bg-green-50" : ""
+                      }`}
+                    onClick={() => {
+                      setFormData((prev) => ({ ...prev, countedCalories: option }))
+                      handleNext()
                     }}
-                  />
-                  <Label htmlFor={item.text} className="flex items-center space-x-2">
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.text}</span>
-                  </Label>
-                </div>
-              ))}
-            </div>
-            <Button onClick={handleNext}>Next</Button>
-          </div>
+                  >
+                    {option === "Yes" ? <Check className="h-8 w-8 mr-2 text-green-600" /> : <X className="h-8 w-8 mr-2 text-green-600" />}
+                    <span className="font-semibold">{option}</span>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )
       case 3:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <div className="flex space-x-4">
-              {["Yes", "No"].map((option) => (
-                <Button
-                  key={option}
-                  variant="outline"
-                  className={`flex-1 h-16 ${
-                    formData.countedCalories === option ? "border-primary" : ""
-                  }`}
-                  onClick={() => {
-                    setFormData((prev) => ({ ...prev, countedCalories: option }))
-                    handleNext()
-                  }}
-                >
-                  {option === "Yes" ? <Check className="h-6 w-6 mr-2" /> : <X className="h-6 w-6 mr-2" />}
-                  {option}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+              <p className="text-muted-foreground mb-6">{steps[currentStep].description}</p>
+              <div className="space-y-4">
+                <Label htmlFor="birthday" className="text-lg font-semibold">Birthday</Label>
+                <Input
+                  type="date"
+                  id="birthday"
+                  name="birthday"
+                  value={formData.birthday}
+                  onChange={handleInputChange}
+                  className="border-green-600 focus:ring-green-600"
+                />
+              </div>
+              <Button onClick={handleNext} className="mt-6 bg-green-600 hover:bg-green-700">Next</Button>
+            </CardContent>
+          </Card>
         )
       case 4:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <div>
-              <Label htmlFor="birthday">Birthday</Label>
-              <Input
-                type="date"
-                id="birthday"
-                name="birthday"
-                value={formData.birthday}
-                onChange={handleInputChange}
-              />
-            </div>
-            <Button onClick={handleNext}>Next</Button>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+              <p className="text-muted-foreground mb-6">{steps[currentStep].description}</p>
+              <div className="space-y-4">
+                <Label htmlFor="height" className="text-lg font-semibold">Height</Label>
+                <div className="flex space-x-4">
+                  <Input
+                    type="number"
+                    id="height"
+                    name="height"
+                    value={formData.height}
+                    onChange={handleInputChange}
+                    className="border-green-600 focus:ring-green-600"
+                  />
+                  <div className="flex space-x-2">
+                    {["cm", "ft/in"].map((unit) => (
+                      <Button
+                        key={unit}
+                        variant="outline"
+                        className={`flex-1 ${formData.heightUnit === unit ? "border-green-600 bg-green-50" : ""}`}
+                        onClick={() => setFormData((prev) => ({ ...prev, heightUnit: unit }))}
+                      >
+                        {unit}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <Button onClick={handleNext} className="mt-6 bg-green-600 hover:bg-green-700">Next</Button>
+            </CardContent>
+          </Card>
         )
       case 5:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <div>
-              <Label htmlFor="height">Height</Label>
-              <Input
-                type="number"
-                id="height"
-                name="height"
-                value={formData.height}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="flex space-x-4">
-              {["cm", "ft/in"].map((unit) => (
-                <Button
-                  key={unit}
-                  variant="outline"
-                  className={`flex-1 ${formData.heightUnit === unit ? "border-primary" : ""}`}
-                  onClick={() => setFormData((prev) => ({ ...prev, heightUnit: unit }))}
-                >
-                  {unit}
-                </Button>
-              ))}
-            </div>
-            <Button onClick={handleNext}>Next</Button>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+              <p className="text-muted-foreground mb-6">{steps[currentStep].description}</p>
+              <div className="space-y-4">
+                {[
+                  { title: "Light active", description: "Mostly sitting, e.g., office worker", icon: Zap },
+                  { title: "Moderately active", description: "Mostly standing, e.g., teacher", icon: Zap },
+                  { title: "Active", description: "Mostly walking, e.g., salesperson", icon: Zap },
+                  { title: "Very active", description: "Physically demanding, e.g., builder", icon: Zap },
+                ].map((item) => (
+                  <Button
+                    key={item.title}
+                    variant="outline"
+                    className={`w-full justify-start text-left h-auto py-4 ${formData.activityLevel === item.title ? "border-green-600 bg-green-50" : ""
+                      }`}
+                    onClick={() => {
+                      setFormData((prev) => ({ ...prev, activityLevel: item.title }))
+                      handleNext()
+                    }}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <item.icon className="h-8 w-8 text-green-600" />
+
+                      <div>
+                        <p className="font-semibold">{item.title}</p>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                      </div>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )
       case 6:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <p className="text-muted-foreground">
-              Knowing your daily activity level helps us calculate your calorie needs more accurately.
-            </p>
-            <div className="space-y-2">
-              {[
-                { title: "Light active", description: "mostly sitting, eg. office worker" },
-                { title: "Moderately active", description: "mostly standing, eg. teacher" },
-                { title: "Active", description: "mostly walking, eg. salesperson" },
-                { title: "Very active", description: "physically demanding, eg. builder" },
-              ].map((item) => (
-                <Button
-                  key={item.title}
-                  variant="outline"
-                  className={`w-full justify-start text-left h-auto py-3 ${
-                    formData.activityLevel === item.title ? "border-primary" : ""
-                  }`}
-                  onClick={() => {
-                    setFormData((prev) => ({ ...prev, activityLevel: item.title }))
-                    handleNext()
-                  }}
-                >
-                  <div>
-                    <p className="font-semibold">{item.title}</p>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+              <p className="text-muted-foreground mb-6">{steps[currentStep].description}</p>
+              <div className="space-y-4">
+                <Label htmlFor="currentWeight" className="text-lg font-semibold">Current Weight</Label>
+                <div className="flex space-x-4">
+                  <Input
+                    type="number"
+                    id="currentWeight"
+                    name="currentWeight"
+                    value={formData.currentWeight}
+                    onChange={handleInputChange}
+                    className="border-green-600 focus:ring-green-600"
+                  />
+                  <div className="flex space-x-2">
+                    {["kg", "lb"].map((unit) => (
+                      <Button
+                        key={unit}
+                        variant="outline"
+                        className={`flex-1 ${formData.weightUnit === unit ? "border-green-600 bg-green-50" : ""}`}
+                        onClick={() => setFormData((prev) => ({ ...prev, weightUnit: unit }))}
+                      >
+                        {unit}
+                      </Button>
+                    ))}
                   </div>
-                </Button>
-              ))}
-            </div>
-          </div>
+                </div>
+              </div>
+              <Button onClick={handleNext} className="mt-6 bg-green-600 hover:bg-green-700">Next</Button>
+            </CardContent>
+          </Card>
         )
       case 7:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <p className="text-muted-foreground">
-              It's okay to guess. You can always adjust your starting weight later.
-            </p>
-            <div>
-              <Label htmlFor="currentWeight">Current Weight</Label>
-              <Input
-                type="number"
-                id="currentWeight"
-                name="currentWeight"
-                value={formData.currentWeight}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="flex space-x-4">
-              {["kg", "lb"].map((unit) => (
-                <Button
-                  key={unit}
-                  variant="outline"
-                  className={`flex-1 ${formData.weightUnit === unit ? "border-primary" : ""}`}
-                  onClick={() => setFormData((prev) => ({ ...prev, weightUnit: unit }))}
-                >
-                  {unit}
-                </Button>
-              ))}
-            </div>
-            <Button onClick={handleNext}>Next</Button>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+              <p className="text-muted-foreground mb-6">{steps[currentStep].description}</p>
+              <div className="space-y-4">
+                <Label htmlFor="goalWeight" className="text-lg font-semibold">Goal Weight</Label>
+                <div className="flex space-x-4">
+                  <Input
+                    type="number"
+                    id="goalWeight"
+                    name="goalWeight"
+                    value={formData.goalWeight}
+                    onChange={handleInputChange}
+                    className="border-green-600 focus:ring-green-600"
+                  />
+                  <div className="flex space-x-2">
+                    {["kg", "lb"].map((unit) => (
+                      <Button
+                        key={unit}
+                        variant="outline"
+                        className={`flex-1 ${formData.weightUnit === unit ? "border-green-600 bg-green-50" : ""}`}
+                        onClick={() => setFormData((prev) => ({ ...prev, weightUnit: unit }))}
+                      >
+                        {unit}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <Button onClick={handleNext} className="mt-6 bg-green-600 hover:bg-green-700">Next</Button>
+            </CardContent>
+          </Card>
         )
       case 8:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <div>
-              <Label htmlFor="goalWeight">Goal Weight</Label>
-              <Input
-                type="number"
-                id="goalWeight"
-                name="goalWeight"
-                value={formData.goalWeight}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="flex space-x-4">
-              {["kg", "lb"].map((unit) => (
-                <Button
-                  key={unit}
-                  variant="outline"
-                  className={`flex-1 ${formData.weightUnit === unit ? "border-primary" : ""}`}
-                  onClick={() => setFormData((prev) => ({ ...prev, weightUnit: unit }))}
-                >
-                  {unit}
-                </Button>
-              ))}
-            </div>
-            <Button onClick={handleNext}>Next</Button>
-          </div>
-        )
-      case 9:
-        return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{steps[currentStep].title}</h2>
-            <p className="text-muted-foreground">
-              We'll adapt our recommendations to your preferences
-            </p>
-            <div className="grid grid-cols-1 gap-4">
-              {[
-                { icon: Utensils, text: "Classic" },
-                { icon: Utensils, text: "Pescatarian" },
-                { icon: Utensils, text: "Vegetarian" },
-                { icon: Utensils, text: "Vegan" },
-              ].map((item) => (
-                <Button
-                  key={item.text}
-                  variant="outline"
-                  className={`flex items-center justify-start space-x-2 h-16 ${
-                    formData.diet === item.text ? "border-primary" : ""
-                  }`}
-                  onClick={() => {
-                    setFormData((prev) => ({ ...prev, diet: item.text }))
-                    handleFinish()
-                  }}
-                >
-                  <item.icon className="h-6 w-6" />
-                  <span>{item.text}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+              <p className="text-muted-foreground mb-6">{steps[currentStep].description}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  { icon: Utensils, text: "Classic", description: "No dietary restrictions" },
+                  { icon: Utensils, text: "Pescatarian", description: "Fish, but no meat" },
+                  { icon: Utensils, text: "Vegetarian", description: "No meat or fish" },
+                  { icon: Utensils, text: "Vegan", description: "No animal products" },
+                ].map((item) => (
+                  <TooltipProvider key={item.text}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={`flex items-center justify-start space-x-4 h-20 ${formData.diet === item.text ? "border-green-600 bg-green-50" : ""
+                            }`}
+                          onClick={() => {
+                            setFormData((prev) => ({ ...prev, diet: item.text }))
+                            handleFinish()
+                          }}
+                        >
+                          <item.icon className="h-8 w-8 text-green-600" />
+                          <span className="font-semibold">{item.text}</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <p>{item.description}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )
       default:
         return null
@@ -398,16 +401,16 @@ export default function OnboardingForm() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="max-w-4xl w-full mx-auto p-8 bg-card rounded-xl shadow-lg">
+    <div className="flex items-center justify-center">
+      <div className="max-w-4xl w-full mx-auto p-8 bg-white rounded">
         <Progress value={(currentStep / (steps.length - 1)) * 100} className="mb-8" />
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            transition={{ duration: 0.5 }}
           >
             {renderStep()}
           </motion.div>
