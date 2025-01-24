@@ -60,10 +60,7 @@ export default function LandingPage() {
         </Link>
         <nav>
           <Link href="/sign-in">
-            <Button variant="ghost">Login</Button>
-          </Link>
-          <Link href="/sign-up">
-            <Button>Sign Up</Button>
+            <Button variant="default">Dashboard</Button>
           </Link>
         </nav>
       </header>

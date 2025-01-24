@@ -7,23 +7,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { BarChart2, User, Timer, Settings, LogOut, Utensils, Apple } from "lucide-react"
-import DateSwitch from './DateSwitch'
+import { User, Settings, LogOut, Utensils, Apple } from "lucide-react"
 import Link from 'next/link'
 import { useClerk } from '@clerk/nextjs';
 
-export const Navbar = () => {
+export const BottomNavbar = () => {
   const { signOut } = useClerk();
 
   return (
-    <nav className="border-b border-green-700 bg-green-600 text-white">
+    <nav className="border-t border-green-700 bg-green-600 text-white fixed bottom-0 w-full md:hidden">
       <div className="container mx-auto px-4 py-2 flex items-center justify-between flex-col gap-4 md:flex-row md:gap-0">
-        <Link href="/dashboard" className='flex items-center space-x-2'>
-          <Apple className="h-8 w-8" />
-          <h1 className="text-2xl font-bold">Calomate</h1>
-        </Link>
-        <DateSwitch />
-        <div className="items-center space-x-4 hidden md:flex">
+        <div className="flex items-center space-x-4">
           <Link href="/recipes">
             <Button variant="ghost" size="sm" className='transition-colors duration-200 hover:bg-green-700 hover:text-white'>
               <Utensils className="w-5 h-5 mr-2" />
