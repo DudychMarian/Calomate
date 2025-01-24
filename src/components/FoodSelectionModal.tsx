@@ -397,7 +397,7 @@ export function FoodSelectionModal({ isOpen, onClose, onSelectFood }: FoodSelect
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] bg-white">
+      <DialogContent className="h-[100dvh] max-w-full sm:h-auto sm:max-w-[600px] bg-white">
         <DialogHeader>
           <DialogTitle>{selectedFood ? 'Food Details' : 'Add Food'}</DialogTitle>
         </DialogHeader>

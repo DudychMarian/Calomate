@@ -22,3 +22,7 @@
 ## Contribution
 
 Feel free to open issues and submit pull requests. Contributions are welcome!
+
+## Dev
+
+`ipconfig getifaddr en0`

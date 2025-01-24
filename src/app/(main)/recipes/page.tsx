@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Plus, Minus, Search, Coffee, Utensils, Salad, Cake, Trash2 } from 'lucide-react'
+import { Plus, Minus, Coffee, Utensils, Salad, Cake, Trash2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -363,7 +362,7 @@ export default function RecipesPage() {
           </div>
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="fixed bottom-4 right-4 rounded-full shadow-lg">
+              <Button className="fixed bottom-16 right-4 rounded-full shadow-lg md:bottom-4">
                 <Plus className="h-6 w-6 mr-2" />
                 Create New Recipe
               </Button>

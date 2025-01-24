@@ -6,7 +6,6 @@ import { DateProvider } from '@/context/DateContext';
 import { UserProvider } from '@/context/UserContext';
 
 import { Toaster } from "@/components/ui/sonner"
-import { Navbar } from '@/components/Navbar';
 
 import "./globals.css";
 

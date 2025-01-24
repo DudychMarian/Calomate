@@ -150,7 +150,7 @@ export default function Home() {
               <MacrosBars target={targetMacros} {...macros} />
             </div>
             <ConsumptionTable calories={calories} macros={{ ...macros, target: targetMacros }} />
-            <WaterTracker showTitle={true} showProgress={true} showGlassCount={true} />
+            <WaterTracker showTitle showProgress showGlassCount hide/>
           </div>
           <div className="md:w-1/2">
             {<MealList onUpdate={handleMealUpdate} onAddFood={handleAddFood} meals={meals} setMeals={setMeals} />}
